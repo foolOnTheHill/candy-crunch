@@ -32,13 +32,16 @@ var main_state = {
 		}
 		this.setLevel();
 
-		this.space = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+		this.game_state = 'playing';
+		this.restart_time = 0;
 	},
 
 	update: function() {
 		this.check_end();
 
-		if (this.moves == -1 && this.space.isDown) {
+		if ((this.game_state == 'waiting') && (this.game.time.now > this.restart_time) && (this.game.input.mousePointer.isDown || this.game.input.pointer1.isDown)) {
+			this.game_state = 'playing';
+			this.restart_text.destroy();
 			this.setLevel();
 		}
 	},
@@ -101,7 +104,8 @@ var main_state = {
 	},
 
 	setLevel: function() {
-		this.moves = 20;
+		this.moves = 21;
+		this.update_moves();
 
 		for (var i = 0; i < 8; i++) {
 			for (var j = 0; j < 9; j++) {
@@ -288,11 +292,21 @@ var main_state = {
 	check_end: function() {
 		if (this.moves == 0) {
 			this.moves -= 1;
+
 			for (var i = 0; i < 8; i++) {
 				for (var j = 0; j < 9; j++) {
 					this.grid[i][j].kill();
 				}
 			}
+
+			this.restart_text = this.game.add.text(275, 275, 'Tap to play again', {font: "50px 'Crafty Girls'", fill: '#FFFFFF', align:'center'});
+			this.restart_text.fontWeight = 'bold';
+			this.restart_text.anchor.setTo(0.5, 0.5);
+			this.game.add.tween(this.restart_text).to({ angle:1 }, 200).to({ angle:-1 }, 150).loop().start();
+
+			this.game_state = 'waiting';
+			this.restart_time = this.game.time.now + 500;
+
 			this.end_se.play();
 		}
 	}
