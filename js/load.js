@@ -21,6 +21,7 @@ var load = {
 		this.game.load.image('red', 'assets/red.png');
 		this.game.load.image('green', 'assets/green.png');
 		this.game.load.image('yellow', 'assets/yellow.png');
+		this.game.load.image('purple', 'assets/purple.png');
 
 		this.game.load.audio('plin', 'assets/plin.wav');
 		this.game.load.audio('plin2', 'assets/plin2.wav');

@@ -107,6 +107,11 @@ var main_state = {
 		this.moves = 21;
 		this.update_moves();
 
+		this.score = 0;
+
+		this.score_text.content = '0';
+		this.score_text.anchor.setTo(0.5, 0.5);
+
 		for (var i = 0; i < 8; i++) {
 			for (var j = 0; j < 9; j++) {
 				this.colors[i][j] = this.getRandomColor();
@@ -141,8 +146,10 @@ var main_state = {
 			this.grid[i][j] = this.game.add.sprite(x, y, 'blue');
 		} else if (this.colors[i][j] == 'green') {
 			this.grid[i][j] = this.game.add.sprite(x, y, 'green');
-		} else {
+		} else if (this.colors[i][j] == 'yellow') {
 			this.grid[i][j] = this.game.add.sprite(x, y, 'yellow');
+		} else {
+			this.grid[i][j] = this.game.add.sprite(x, y, 'purple');
 		}
 
 		this.grid[i][j].anchor.setTo(0.5, 0.5);
@@ -158,6 +165,11 @@ var main_state = {
 			for (var j = 0; j < 9; j++) {
 
 				if (i+1 <= 7 && i+2 <= 7 && i+3 <= 7 && this.colors[i][j] == this.colors[i+1][j] && this.colors[i+1][j] == this.colors[i+2][j] && this.colors[i+2][j] == this.colors[i+3][j]) {
+					var points = 100; 
+					if (this.colors[i][j] == 'purple') {
+						points = 200;
+					}
+
 					for (var a = i; a < 8; a++) {
 						if (a + 4 < 8) { 
 							this.colors[a][j] = this.colors[a+4][j];
@@ -181,8 +193,8 @@ var main_state = {
 						this.game.add.tween(this.grid[5][j].scale).to({x:1.32, y:1.32}, 300, null, false, 0, 0, true).to({x:1, y:1}, 300, null, false, 0, 0, true).start();
 						this.game.add.tween(this.grid[4][j].scale).to({x:1.32, y:1.32}, 300, null, false, 0, 0, true).to({x:1, y:1}, 300, null, false, 0, 0, true).start();
 						
-						this.update_score(100);
-					}
+						this.update_score(points);
+					} 
 				} 
 			}
 		}
@@ -191,28 +203,34 @@ var main_state = {
 			for (var j = 0; j < 9; j++) {
 
 				if (i+1 <= 7 && i+2 <= 7 && this.colors[i][j] == this.colors[i+1][j] && this.colors[i+1][j] == this.colors[i+2][j]) {
-					for (var a = i; a < 8; a++) {
-						if (a + 3 < 8) { 
-							this.colors[a][j] = this.colors[a+3][j];
+					if (this.colors[i][j] !== 'purple') {
+						for (var a = i+1; a < 8; a++) {
+							if (a + 3 < 8) { 
+								this.colors[a][j] = this.colors[a+3][j];
+							}
 						}
-					}			
-					this.colors[7][j] = this.getRandomColor();
-					this.colors[6][j] = this.getRandomColor();
-					this.colors[5][j] = this.getRandomColor();
-					
-					for (var line = i; line < 8; line++) {
-						this.paintCircle(line, j);
-					}
-					c++;
-
-					if (!this.setAnimationsOff) {
-						this.crunch_se.play();
-
-						this.game.add.tween(this.grid[7][j].scale).to({x:1.32, y:1.32}, 300, null, false, 0, 0, true).to({x:1, y:1}, 300, null, false, 0, 0, true).start();
-						this.game.add.tween(this.grid[6][j].scale).to({x:1.32, y:1.32}, 300, null, false, 0, 0, true).to({x:1, y:1}, 300, null, false, 0, 0, true).start();
-						this.game.add.tween(this.grid[5][j].scale).to({x:1.32, y:1.32}, 300, null, false, 0, 0, true).to({x:1, y:1}, 300, null, false, 0, 0, true).start();
+						this.colors[7][j] = this.getRandomColor();
+						this.colors[6][j] = this.getRandomColor();
+						this.colors[5][j] = this.getRandomColor();
 						
-						this.update_score(50);
+						if (!this.setAnimationsOff) {
+							this.colors[i][j] = 'purple';
+						}			
+						
+						for (var line = i; line < 8; line++) {
+							this.paintCircle(line, j);
+						}
+						c++;
+
+						if (!this.setAnimationsOff) {
+							this.crunch_se.play();
+
+							this.game.add.tween(this.grid[7][j].scale).to({x:1.32, y:1.32}, 300, null, false, 0, 0, true).to({x:1, y:1}, 300, null, false, 0, 0, true).start();
+							this.game.add.tween(this.grid[6][j].scale).to({x:1.32, y:1.32}, 300, null, false, 0, 0, true).to({x:1, y:1}, 300, null, false, 0, 0, true).start();
+							this.game.add.tween(this.grid[5][j].scale).to({x:1.32, y:1.32}, 300, null, false, 0, 0, true).to({x:1, y:1}, 300, null, false, 0, 0, true).start();
+							
+							this.update_score(50);
+						}
 					}
 				} 
 			}
@@ -221,6 +239,11 @@ var main_state = {
 		for(var i = 0; i < 8; i++){
 			for (var j = 0; j < 9; j++){
 				if (j+1 <= 8 && j+2 <= 8 && j+3 <= 8 && this.colors[i][j] == this.colors[i][j+1] && this.colors[i][j+1] == this.colors[i][j+2] && this.colors[i][j+2] == this.colors[i][j+3]) {
+					var points = 100;
+					if (this.colors[i][j] == 'purple') {
+						points = 200;
+					}
+
 					for (var a = j; a < 9; a++) {
 						if (a + 4 < 9) { 
 							this.colors[i][a] = this.colors[i][a+4];
@@ -244,7 +267,7 @@ var main_state = {
 						this.game.add.tween(this.grid[i][7].scale).to({x:1.32, y:1.32}, 300, null, false, 0, 0, true).to({x:1, y:1}, 300, null, false, 0, 0, true).start();
 						this.game.add.tween(this.grid[i][8].scale).to({x:1.32, y:1.32}, 300, null, false, 0, 0, true).to({x:1, y:1}, 300, null, false, 0, 0, true).start();
 						
-						this.update_score(100);
+						this.update_score(points);
 					}
 				}
 			}
@@ -253,28 +276,34 @@ var main_state = {
 		for(var i = 0; i < 8; i++){
 			for (var j = 0; j < 9; j++){
 				if (j+1 <= 8 && j+2 <= 8 && this.colors[i][j] == this.colors[i][j+1] && this.colors[i][j+1] == this.colors[i][j+2]) {
-					for (var a = j; a < 9; a++) {
-						if (a + 3 < 9) { 
-							this.colors[i][a] = this.colors[i][a+3];
+					if (this.colors[i][j] !== 'purple') {
+						for (var a = j+1; a < 9; a++) {
+							if (a + 3 < 9) { 
+								this.colors[i][a] = this.colors[i][a+3];
+							}
 						}
-					}
-					this.colors[i][6] = this.getRandomColor();
-					this.colors[i][7] = this.getRandomColor();
-					this.colors[i][8] = this.getRandomColor();
-					
-					for (var col = j; col < 9; col++) {
-						this.paintCircle(i, col);
-					}
-					c++;
-					
-					if (!this.setAnimationsOff) {
-						this.crunch_se.play();
-					
-						this.game.add.tween(this.grid[i][6].scale).to({x:1.32, y:1.32}, 300, null, false, 0, 0, true).to({x:1, y:1}, 300, null, false, 0, 0, true).start();
-						this.game.add.tween(this.grid[i][7].scale).to({x:1.32, y:1.32}, 300, null, false, 0, 0, true).to({x:1, y:1}, 300, null, false, 0, 0, true).start();
-						this.game.add.tween(this.grid[i][8].scale).to({x:1.32, y:1.32}, 300, null, false, 0, 0, true).to({x:1, y:1}, 300, null, false, 0, 0, true).start();
+						this.colors[i][6] = this.getRandomColor();
+						this.colors[i][7] = this.getRandomColor();
+						this.colors[i][8] = this.getRandomColor();
 						
-						this.update_score(50);
+						if (!this.setAnimationsOff) {
+							this.colors[i][j] = 'purple';
+						}
+						
+						for (var col = j; col < 9; col++) {
+							this.paintCircle(i, col);
+						}
+						c++;
+						
+						if (!this.setAnimationsOff) {
+							this.crunch_se.play();
+						
+							this.game.add.tween(this.grid[i][6].scale).to({x:1.32, y:1.32}, 300, null, false, 0, 0, true).to({x:1, y:1}, 300, null, false, 0, 0, true).start();
+							this.game.add.tween(this.grid[i][7].scale).to({x:1.32, y:1.32}, 300, null, false, 0, 0, true).to({x:1, y:1}, 300, null, false, 0, 0, true).start();
+							this.game.add.tween(this.grid[i][8].scale).to({x:1.32, y:1.32}, 300, null, false, 0, 0, true).to({x:1, y:1}, 300, null, false, 0, 0, true).start();
+							
+							this.update_score(50);
+						}
 					}
 				}
 			}
